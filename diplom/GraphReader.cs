@@ -155,11 +155,16 @@ namespace HyperGraphLib
 
                 if (array.Length != 3)
                 {
+                    ThrowException("List length too small");
+                }
+
+                if (array.Length != 3)
+                {
                     ThrowException("List must have 2 or 3 digits");
                 }
 
-                if (!(array[0] > 0 || array[0] < nodes.Count ||
-                    array[1] > 0 || array[1] < nodes.Count))
+                if (!(array[0] > 0 && array[0] <= nodes.Count &&
+                    array[1] > 0 && array[1] <= nodes.Count))
                 {
                     ThrowException("Node id must be between 0 or " + nodes.Count);
                 }
@@ -457,7 +462,7 @@ namespace HyperGraphLib
 
         private static Exception ThrowException(string str)
         {
-            throw new Exception(str + "\nLine: " + currentLine);
+            throw new Exception(str + ". Line: " + currentLine);
         }
     }
 }

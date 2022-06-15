@@ -14,6 +14,12 @@ namespace diplom
             return node.Id == edge.First.Id;
         }
 
+        public static bool IsEdgeBetweenNodes(this Edge edge, int firstId, int secondId)
+        {
+            return (edge.First.Id == firstId && edge.Second.Id == secondId)
+                || (edge.First.Id == secondId && edge.Second.Id == firstId);
+        }
+
         public static Node GetOtherNodeFromEdge(this Node node, Edge edge)
         {
             return node.Id == edge.First.Id 
@@ -24,6 +30,18 @@ namespace diplom
         {
             return node.Id == branch.First.Id
                 ? branch.Second : branch.First;
+        }
+
+        public static Node MakeCopy(this Node node)
+        {
+            return new Node()
+            {
+                Branches = node.Branches,
+                Edges = node.Edges,
+                Id = node.Id,
+                Name = node.Name,
+                PrimaryGraph = node.PrimaryGraph,
+            };
         }
 
     }

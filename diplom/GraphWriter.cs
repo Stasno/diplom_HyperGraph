@@ -17,7 +17,7 @@ namespace diplom
     public static class GraphWriter
     {
 
-        public static async Task WriteGraphToFile(this IBaseHyperGraphManipulation graph, 
+        public static async Task WriteGraphToFile(this PrimaryGraph graph, 
             string filepath, 
             OutputType edgeOutputType,
             OutputType branchOutputType)
@@ -26,7 +26,7 @@ namespace diplom
             string input;
 
             // пишется кол-во вершин
-            stream.WriteLine(graph.BaseGraph.Nodes.Count);
+            stream.WriteLine(graph.Nodes.Count);
 
             // пишется тип вывода
             stream.WriteLine(edgeOutputType.ToString());
@@ -36,7 +36,7 @@ namespace diplom
             {
                 case OutputType.List:
                     {
-                        var list = graph.BaseGraph.AsList();
+                        var list = graph.AsList();
                         stream.WriteLine(list.Count);
                         foreach (var item in list)
                         {
@@ -48,7 +48,7 @@ namespace diplom
                     }
                 case OutputType.Matrix:
                     {
-                        var matrix = graph.BaseGraph.AsMatrix();
+                        var matrix = graph.AsMatrix();
 
                         StringBuilder output = new(matrix.size*3);
 
@@ -74,9 +74,9 @@ namespace diplom
             }
 
             // Кол-во вторичных сетей
-            stream.WriteLine(graph.BaseGraph.SecondaryGraphs.Count);
+            stream.WriteLine(graph.SecondaryGraphs.Count);
 
-            foreach (var secondaryGraph in graph.BaseGraph.SecondaryGraphs.Values)
+            foreach (var secondaryGraph in graph.SecondaryGraphs.Values)
             {
                 // Тип вывода ветвей
                 stream.WriteLine(branchOutputType.ToString());

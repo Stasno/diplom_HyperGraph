@@ -8,7 +8,6 @@ namespace diplom
 {
     public static class GraphExtension
     {
-
         public static (long[][] matrix, int size) AsMatrix(this PrimaryGraph graph)
         {
             int size = graph.Nodes.Count;
@@ -40,11 +39,8 @@ namespace diplom
                     var anotherNode = node.GetOtherNodeFromEdge(edge.Value);
 
                     result[i][nodeIndexes[anotherNode.Id]] = edge.Value.Weight;
-
                 }
-
             }
-            
             return (result, size);
         }
 
@@ -166,5 +162,70 @@ namespace diplom
             return result;
         }
 
+        public static PrimaryGraph CreatePrimaryGraphFromSecondary<T>(IEnumerable<SecondaryGraph> secondaryGraphs) where T : IBaseHyperGraphManipulation, new()
+        {
+            IBaseHyperGraphManipulation result = new T();
+
+            int nodeCount = 0;
+
+            var branches = secondaryGraphs.SelectMany(i => i.Branches)
+                .Distinct();
+
+            var newNodes = branches.Select(i => i.Value.First)
+                .Union(branches.Select(i => i.Value.Second))
+                .Distinct()
+                .Select(i =>
+                {
+                    var copy = result.CreateNode();
+
+                    copy.Name = i.Name;
+                    copy.Id = i.Id;
+
+                    return copy;
+                });
+
+            var newEdges = branches
+                .Select(branch =>
+                {
+                    var firstNode = newNodes.First(i => i.Id == branch.Value.First.Id);
+                    var secondNode = newNodes.First(i => i.Id == branch.Value.Second.Id);
+
+                    var edge = result.CreateEdge(firstNode, secondNode);
+
+                    edge.Id = branch.Key;
+                    edge.Weight = branch.Value.Weight;
+
+                    result.AddEdge(edge);
+
+                    return edge;
+                }).ToList();
+
+            foreach (var node in newNodes)
+            {
+                result.AddNode(node);
+            }
+
+            return result.BaseGraph;
+        }
+
+        public static IEnumerable<(SecondaryGraph secondaryGraph, IEnumerable<Branch> branches)> SecondaryGraphConflicts(this PrimaryGraph graph,
+            IEnumerable<Edge> edgesToRemove)
+        {
+            List<(SecondaryGraph secondaryGraph, IEnumerable<Branch> branches)> result = new();
+
+            var branches = edgesToRemove.SelectMany(i => i.Branches.Values).Distinct().GroupBy(i => i.SecondaryGraph);
+
+            foreach (var branch in branches)
+            {
+                result.Add(new (branch.Key, branch.AsEnumerable()));
+            }
+
+            return result;
+        }
+
+        public static IDictionary<int, (long Value, bool IsVisited)> СonnectivityСomponent(this PrimaryGraph graph)
+        {
+            return null;
+        }
     }
 }

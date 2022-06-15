@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,15 @@ namespace diplom
 
     public class BaseHyperGraphManipulation : IBaseHyperGraphManipulation
     {
+        public BaseHyperGraphManipulation() { }
+        public BaseHyperGraphManipulation(PrimaryGraph baseGraph)
+        {
+            _graph = baseGraph;
+            var lastId = Math.Max(_graph.Nodes.Max(i => i.Key), _graph.Edges.Max(i => i.Key));
+            lastId = Math.Max(lastId, _graph.Branches.Max(i => i.Key));
+            lastId = Math.Max(lastId, _graph.SecondaryGraphs.Max(i => i.Key));
+        }
+
         private PrimaryGraph _graph = new() 
         { 
             Branches = new MyCollection<Branch>(),
