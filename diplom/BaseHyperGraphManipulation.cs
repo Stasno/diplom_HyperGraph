@@ -191,23 +191,15 @@ namespace diplom
         public void RemoveNode(Node node)
         {
             BaseGraph.Nodes.Remove(node.Id);
-            var edges = BaseGraph.Edges.Values.Where(i => i.First == node || i.Second == node);
-            var braches = BaseGraph.Branches.Values.Where(i => i.First == node || i.Second == node);
 
-            foreach (var i in edges)
+            foreach (var i in node.Edges.Values)
             {
-                BaseGraph.Edges.Remove(i.Id);
-
-                foreach (var j in i.Branches.Values)
-                {
-                    BaseGraph.Branches.Remove(j.Id);
-                    j.SecondaryGraph.Branches.Remove(j.Id);
-                }
+                RemoveEdge(i);
             }
 
-            foreach (var i in braches)
+            foreach (var i in node.Branches.Values)
             {
-                BaseGraph.Branches.Remove(i.Id);
+                RemoveBranch(i);
             }
 
             foreach (var i in BaseGraph.SecondaryGraphs.Values)
@@ -226,8 +218,7 @@ namespace diplom
 
             foreach (var j in edge.Branches.Values)
             {
-                BaseGraph.Branches.Remove(j.Id);
-                j.SecondaryGraph.Branches.Remove(j.Id);
+                RemoveBranch(j);
             }
 
             edge.First.Edges.Remove(edge.Id);
